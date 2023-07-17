@@ -1,5 +1,5 @@
 import { ISubject } from './ISubject';
 
 export interface IObserver {
-  update(subject: ISubject): void;
+  update(subject: ISubject, args: string[]): void;
 }

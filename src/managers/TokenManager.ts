@@ -36,8 +36,28 @@ export default class TokenManager extends ITokenManager {
       }
     };
 
-    this.makeRefreshRequest(apiConfig);
+    this.initializeManager(apiConfig);
   }
+
+  protected initializeManager = async (apiConfig: {
+    url;
+    method;
+    headers;
+    body;
+  }): Promise<void> => {
+    await this.makeRefreshRequest(apiConfig);
+
+    //Create timed task to refresh token
+    if (this.accessTokenExpireTime > this.refreshTokenExpireTime) {
+      setInterval(() => {
+        this.refreshAccessToken();
+      }, this.refreshTokenExpireTime);
+    } else {
+      setInterval(() => {
+        this.refreshAccessToken();
+      }, this.accessTokenExpireTime);
+    }
+  };
 
   protected makeRefreshRequest = async (apiConfig: {
     url;
@@ -66,7 +86,14 @@ export default class TokenManager extends ITokenManager {
     };
 
     await this.makeRefreshRequest(apiConfig);
+
+    //notify observers about new access token
+    this.notify();
   };
 
-  protected notify = (): void => {};
+  protected notify = (): void => {
+    this.observers.forEach((observer) => {
+      observer.update(this, [this.accessToken]);
+    });
+  };
 }
