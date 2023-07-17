@@ -1,4 +1,5 @@
-import { attributes } from './attributes';
+import { Attribute } from './attributes';
+import { KeycloakAttributes } from './attribute';
 
 export interface User {
   id?: string;
@@ -13,7 +14,7 @@ export interface User {
   email?: string;
   federationLink?: string;
   serviceAccountClientId?: string;
-  attributes?: attributes;
+  attributes?: KeycloakAttributes;
   credentials?: never;
   disableableCredentialTypes?: Set<string>;
   requiredActions?: string[];

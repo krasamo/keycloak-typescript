@@ -1,5 +1,5 @@
 import { User } from '../../models/user';
-import { attribute } from '../../models/attribute';
+import { Attribute } from '../../models/attribute';
 
 export interface IUserManager {
   get(userId: string): Promise<User>;
@@ -12,14 +12,11 @@ export interface IUserManager {
     isTemporaryPassword: boolean
   ): Promise<void>;
 
-  getAttributes(userId: string): Promise<attribute[]>;
+  getAttributes(userId: string): Promise<Attribute[]>;
   getRealmRoles(userId: string): Promise<string[]>;
-  getClientRoles(
-    userId: string,
-    client: string
-  ): Promise<Map<string, string[]>>;
+  getClientRoles(userId: string): Promise<Map<string, string[]>>;
 
-  addAttributes(userId: string, attributes: attribute[]): Promise<void>;
+  addAttributes(userId: string, attributes: Attribute[]): Promise<void>;
   addRealmRoles(userId: string, roles: string[]): Promise<void>;
   addClientRoles(
     userId: string,
