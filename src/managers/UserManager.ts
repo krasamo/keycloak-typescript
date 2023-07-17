@@ -187,7 +187,9 @@ export default class UserManager implements IUserManager, IObserver {
     await requestBuilder(apiConfig);
   };
 
-  update(subject: ISubject) {
-    //TODO
+  update(subject: ISubject, args: string[]) {
+    if (args.length > 0) {
+      this.accessToken = args[0];
+    }
   }
 }
