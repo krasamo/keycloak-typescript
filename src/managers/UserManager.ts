@@ -3,14 +3,38 @@ import { User } from '../models/user';
 import { HeadersFactory } from '../helpers/headers-factory';
 import { requestBuilder } from '../helpers/request-builder';
 import { IObserver } from '../observer/IObserver';
+import { ISubject } from '../observer/ISubject';
+import { Attribute } from '../models/attribute';
+import {
+  parseAttributes,
+  parseKeycloakAttributes
+} from '../helpers/attributes-parser';
 
 export default class UserManager implements IUserManager, IObserver {
   private readonly url: string;
   private accessToken: string;
 
-  constructor() {}
+  constructor(url: string) {
+    this.url = url;
+  }
 
-  get = async (userId: string): Promise<User> => {};
+  get = async (userId: string): Promise<User> => {
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const apiConfig = {
+      url: `${this.url}/${userId}`,
+      method: 'GET',
+      headers: headers,
+      body: {}
+    };
+
+    const response = await requestBuilder(apiConfig);
+
+    return response?.data as User;
+  };
+
   create = async (
     email: string,
     username: string,
@@ -19,7 +43,9 @@ export default class UserManager implements IUserManager, IObserver {
     password: string,
     isTemporaryPassword: boolean
   ): Promise<void> => {
-    const headers = HeadersFactory.instance().authorizationHeader(this.token);
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
 
     const apiConfig = {
       url: this.url,
@@ -43,30 +69,92 @@ export default class UserManager implements IUserManager, IObserver {
     ]);
   };
 
-  getAttributes = async (userId: string): Promise<attribute[]> => {};
-  getRealmRoles = async (userId: string): Promise<string[]> => {};
-  getClientRoles = async (
-    userId: string,
-    client: string
-  ): Promise<Map<string, string[]>> => {
-    //TODO
+  getAttributes = async (userId: string): Promise<Attribute[]> => {
+    const userData = await this.get(userId);
+
+    const userAttributes = parseKeycloakAttributes(userData?.attributes);
+
+    return userAttributes;
+  };
+
+  getRealmRoles = async (userId: string): Promise<string[]> => {
+    const userData = await this.get(userId);
+
+    return userData?.realmRoles;
+  };
+
+  getClientRoles = async (userId: string): Promise<Map<string, string[]>> => {
+    const userData = await this.get(userId);
+
+    return userData?.clientRoles;
   };
 
   addAttributes = async (
     userId: string,
-    attributes: attribute[]
+    attributes: Attribute[]
   ): Promise<void> => {
-    //TODO
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const previousAttributes: Attribute[] = await this.getAttributes(userId);
+    const combinedAttributes: Attribute[] =
+      previousAttributes.concat(attributes);
+
+    const apiConfig = {
+      url: `${this.url}/${userId}`,
+      method: 'PUT',
+      headers: headers,
+      body: {
+        attributes: Object.fromEntries(parseAttributes(combinedAttributes))
+      }
+    };
+
+    await requestBuilder(apiConfig);
   };
   addRealmRoles = async (userId: string, roles: string[]): Promise<void> => {
-    //TODO
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const previousRoles: string[] = await this.getRealmRoles(userId);
+    const combinedRoles: string[] = previousRoles.concat(roles);
+
+    const apiConfig = {
+      url: `${this.url}/${userId}`,
+      method: 'PUT',
+      headers: headers,
+      body: {
+        attributes: combinedRoles
+      }
+    };
+
+    await requestBuilder(apiConfig);
   };
   addClientRoles = async (
     userId: string,
     client: string,
     roles: string[]
   ): Promise<void> => {
-    //TODO
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const combinedRoles: Map<string, string[]> = await this.getClientRoles(
+      userId
+    );
+    combinedRoles.set(client, roles);
+
+    const apiConfig = {
+      url: `${this.url}/${userId}`,
+      method: 'PUT',
+      headers: headers,
+      body: {
+        attributes: Object.fromEntries(combinedRoles)
+      }
+    };
+
+    await requestBuilder(apiConfig);
   };
 
   resetPassword = async (
@@ -75,7 +163,7 @@ export default class UserManager implements IUserManager, IObserver {
     isTemporary: boolean
   ): Promise<void> => {
     const apiConfig = {
-      url: `${this.url}/reset-password`,
+      url: `${this.url}/${userId}/reset-password`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
       body: {
@@ -98,4 +186,8 @@ export default class UserManager implements IUserManager, IObserver {
 
     await requestBuilder(apiConfig);
   };
+
+  update(subject: ISubject) {
+    //TODO
+  }
 }
