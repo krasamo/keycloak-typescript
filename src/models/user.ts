@@ -1,4 +1,3 @@
-import { Attribute } from './attributes';
 import { KeycloakAttributes } from './attribute';
 
 export interface User {

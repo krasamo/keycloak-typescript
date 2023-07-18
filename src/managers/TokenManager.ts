@@ -5,8 +5,8 @@ import { IObserver } from '../observer/IObserver';
 
 export default class TokenManager extends ITokenManager {
   private readonly url: string;
-  private accessToken: string;
-  private refreshToken: string;
+  private accessToken: string = '';
+  private refreshToken: string = '';
   private accessTokenExpireTime: number;
   private refreshTokenExpireTime: number;
   private clientId: string;
@@ -22,6 +22,9 @@ export default class TokenManager extends ITokenManager {
     this.url = url;
     this.clientSecret = keycloakLogin.clientSecret;
     this.clientId = keycloakLogin.clientId;
+
+    this.accessTokenExpireTime = Number.POSITIVE_INFINITY;
+    this.refreshTokenExpireTime = Number.POSITIVE_INFINITY;
 
     const apiConfig = {
       url: this.url,

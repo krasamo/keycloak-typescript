@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "lint": "eslint . --ext .ts --ext .js",
+    "build": "tsc --build",
     "prettier:format": "prettier --config .prettierrc 'src/**/*.(ts|js)' --write",
     "prettier:watch": "onchange 'src/**/*.(ts|js)' -- prettier --write {{changed}}",
     "test": "echo \"Error: no test specified\" && exit 1"

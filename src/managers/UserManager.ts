@@ -4,7 +4,7 @@ import { HeadersFactory } from '../helpers/headers-factory';
 import { requestBuilder } from '../helpers/request-builder';
 import { IObserver } from '../observer/IObserver';
 import { ISubject } from '../observer/ISubject';
-import { Attribute } from '../models/attribute';
+import { Attribute, KeycloakAttributes } from '../models/attribute';
 import {
   parseAttributes,
   parseKeycloakAttributes
@@ -12,7 +12,7 @@ import {
 
 export default class UserManager implements IUserManager, IObserver {
   private readonly url: string;
-  private accessToken: string;
+  private accessToken: string = '';
 
   constructor(url: string) {
     this.url = url;
@@ -72,7 +72,10 @@ export default class UserManager implements IUserManager, IObserver {
   getAttributes = async (userId: string): Promise<Attribute[]> => {
     const userData = await this.get(userId);
 
-    const userAttributes = parseKeycloakAttributes(userData?.attributes);
+    const keycloakAttributes: KeycloakAttributes =
+      userData.attributes != undefined ? userData.attributes : new Map();
+
+    const userAttributes = parseKeycloakAttributes(keycloakAttributes);
 
     return userAttributes;
   };
@@ -80,13 +83,19 @@ export default class UserManager implements IUserManager, IObserver {
   getRealmRoles = async (userId: string): Promise<string[]> => {
     const userData = await this.get(userId);
 
-    return userData?.realmRoles;
+    const realmRoles: string[] =
+      userData.realmRoles != undefined ? userData.realmRoles : [];
+
+    return realmRoles;
   };
 
   getClientRoles = async (userId: string): Promise<Map<string, string[]>> => {
     const userData = await this.get(userId);
 
-    return userData?.clientRoles;
+    const clientRoles: Map<string, string[]> =
+      userData.clientRoles != undefined ? userData.clientRoles : new Map();
+
+    return clientRoles;
   };
 
   addAttributes = async (
