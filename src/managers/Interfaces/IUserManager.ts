@@ -1,9 +1,10 @@
 import { User } from '../../models/user';
-import { Attribute } from '../../models/attribute';
 
-export interface IUserManager {
-  get(userId: string): Promise<User>;
-  create(
+export abstract class IUserManager {
+  public abstract get(userId: string): Promise<User>;
+  protected abstract getRoles(userId: string): Promise<never>;
+
+  public abstract create(
     email: string,
     username: string,
     firstName: string,
@@ -12,19 +13,21 @@ export interface IUserManager {
     isTemporaryPassword: boolean
   ): Promise<void>;
 
-  getAttributes(userId: string): Promise<Attribute[]>;
-  getRealmRoles(userId: string): Promise<string[]>;
-  getClientRoles(userId: string): Promise<Map<string, string[]>>;
-
-  addAttributes(userId: string, attributes: Attribute[]): Promise<void>;
-  addRealmRoles(userId: string, roles: string[]): Promise<void>;
-  addClientRoles(
+  public abstract modify(
     userId: string,
-    client: string,
-    roles: string[]
+    user: User,
+    isReplaceOperation: boolean
+  ): Promise<User>;
+  protected abstract modifyRoles(
+    userID: string,
+    realmRoles?: string[],
+    clientRoles?: Map<string, string[]>
   ): Promise<void>;
 
-  resetPassword(
+  protected abstract trimUserInfo(user: User): User;
+  protected abstract fuseUsers(a: User, b: User): User;
+
+  public abstract resetPassword(
     userId: string,
     newPassword: string,
     isTemporary: boolean

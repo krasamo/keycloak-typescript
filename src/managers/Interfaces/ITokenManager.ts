@@ -1,12 +1,8 @@
 import { ISubject } from '../../observer/ISubject';
+import { KeycloakLogin } from '../../models/keycloak-login';
 
 export abstract class ITokenManager extends ISubject {
-  protected abstract initializeManager({
-    url,
-    method = 'get',
-    headers = {},
-    body
-  }): void;
+  public abstract initializeManager(keycloakLogin: KeycloakLogin): void;
   protected abstract makeRefreshRequest({
     url,
     method = 'get',
