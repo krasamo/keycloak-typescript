@@ -2,19 +2,26 @@
   "name": "keycloak-typescript",
   "version": "1.0.0",
   "description": "A user friendly library to use keycloak in nodejs projects",
-  "main": "index.js",
+  "main": "lib/index.js",
+  "types": "lib/index.d.ts",
   "scripts": {
     "lint": "eslint . --ext .ts --ext .js",
+    "build": "tsc --build",
     "prettier:format": "prettier --config .prettierrc 'src/**/*.(ts|js)' --write",
     "prettier:watch": "onchange 'src/**/*.(ts|js)' -- prettier --write {{changed}}",
+    "pack": "npm pack --pack-destination ~",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "Nestor Sandoval",
   "license": "MIT",
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
+    "@types/jest": "^29.5.1",
     "@types/node": "^20.4.2",
     "@typescript-eslint/eslint-plugin": "^6.0.0",
     "@typescript-eslint/parser": "^6.0.0",
+    "jest": "^29.5.0",
+    "jest-mock-extended": "^3.0.4",
     "eslint": "^8.44.0",
     "eslint-config-prettier": "^8.8.0",
     "eslint-plugin-prettier": "^5.0.0",
@@ -23,6 +30,7 @@
     "typescript": "^5.1.6"
   },
   "dependencies": {
-    "axios": "^1.4.0"
+    "axios": "^1.4.0",
+    "query-string": "^8.1.0"
   }
 }

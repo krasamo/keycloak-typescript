@@ -1,3 +1,4 @@
+// Interfaces
 import { IHeadersFactory } from './interfaces/iHeadersFactory';
 
 export class HeadersFactory implements IHeadersFactory {
@@ -13,5 +14,12 @@ export class HeadersFactory implements IHeadersFactory {
 
   authorizationHeader(accessToken: string) {
     return { Authorization: `Bearer ${accessToken}` };
+  }
+
+  authAndUrlEncodedHeader(accessToken: string) {
+    return {
+      'Authorization': `Bearer ${accessToken}`,
+      'content-type': 'application/x-www-form-urlencoded'
+    };
   }
 }
