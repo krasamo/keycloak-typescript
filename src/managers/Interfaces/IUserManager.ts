@@ -1,3 +1,4 @@
+// Models
 import { User } from '../../models/user';
 
 export abstract class IUserManager {

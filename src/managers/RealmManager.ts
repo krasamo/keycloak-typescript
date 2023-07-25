@@ -1,9 +1,14 @@
+//Interfaces
 import { IRealmRolesManager } from './Interfaces/IRealmRolesManager';
-import { HeadersFactory } from '../helpers/headers-factory';
-import { requestBuilder } from '../helpers/request-builder';
-import { RoleRepresentation } from '../models/role-representation';
 import { IObserver } from '../observer/IObserver';
 import { ISubject } from '../observer/ISubject';
+
+// Helpers
+import { HeadersFactory } from '../helpers/headers-factory';
+import { requestBuilder } from '../helpers/request-builder';
+
+// Models
+import { RoleRepresentation } from '../models/role-representation';
 
 export class RealmManager implements IRealmRolesManager, IObserver {
   private readonly url: string;
@@ -13,7 +18,7 @@ export class RealmManager implements IRealmRolesManager, IObserver {
     this.url = url;
     this.accessToken = '';
   }
-  getRoles = async (realmName: string): Promise<RoleRepresentation[]> => {
+  getAllRoles = async (realmName: string): Promise<RoleRepresentation[]> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
     );
@@ -30,22 +35,20 @@ export class RealmManager implements IRealmRolesManager, IObserver {
     return response.data as RoleRepresentation[];
   };
 
-  getRole = async (
+  getRoles = async (
     realmName: string,
-    roleName: string
-  ): Promise<RoleRepresentation> => {
-    const rolesList = await this.getRoles(realmName);
+    rolesNames: string[]
+  ): Promise<RoleRepresentation[]> => {
+    const rolesList: RoleRepresentation[] = await this.getAllRoles(realmName);
+    const namesSet: Set<string> = new Set(rolesNames);
 
-    let desiredRole: RoleRepresentation = {};
+    const desiredRoles: RoleRepresentation[] = [];
 
     rolesList.forEach((role) => {
-      if (role.name == roleName) {
-        desiredRole = role;
-        return desiredRole;
-      }
+      if (role.name && namesSet.has(role.name)) desiredRoles.push(role);
     });
 
-    return desiredRole;
+    return desiredRoles;
   };
 
   update(subject: ISubject, args: string[]) {

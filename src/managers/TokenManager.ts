@@ -1,7 +1,14 @@
-import { ITokenManager } from './Interfaces/ITokenManager';
-import { requestBuilder } from '../helpers/request-builder';
-import { KeycloakLogin } from '../models/keycloak-login';
+// Interfaces
 import { IObserver } from '../observer/IObserver';
+import { ITokenManager } from './Interfaces/ITokenManager';
+
+// Helpers
+import { requestBuilder } from '../helpers/request-builder';
+
+// Models
+import { KeycloakLogin } from '../models/keycloak-login';
+
+// External
 import * as querystring from 'querystring';
 
 export default class TokenManager extends ITokenManager {
@@ -79,7 +86,6 @@ export default class TokenManager extends ITokenManager {
     this.accessTokenExpireTime = response?.data.expires_in;
     this.refreshTokenExpireTime = response?.data.refresh_expires_in;
 
-    console.log(`Access token: ${this.accessToken}`);
     //notify observers about new access token
     this.notify();
   };
@@ -103,9 +109,7 @@ export default class TokenManager extends ITokenManager {
   };
 
   protected notify = (): void => {
-    console.log('Called notify method');
     this.observers.forEach((observer) => {
-      console.log('Updated a observer');
       observer.update(this, [this.accessToken ? this.accessToken : '']);
     });
   };

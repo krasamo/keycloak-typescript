@@ -1,3 +1,4 @@
+// Interfaces
 import { ISubject } from './ISubject';
 
 export interface IObserver {

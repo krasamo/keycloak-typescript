@@ -1,3 +1,4 @@
+// Interfaces
 import { IObserver } from './IObserver';
 
 export abstract class ISubject {

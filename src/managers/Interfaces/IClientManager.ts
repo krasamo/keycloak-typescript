@@ -1,3 +1,4 @@
+// Models
 import { ClientRepresentation } from '../../models/client-representation';
 
 export interface IClientManager {

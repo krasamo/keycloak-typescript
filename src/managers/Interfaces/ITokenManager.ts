@@ -1,4 +1,7 @@
+// Interfaces
 import { ISubject } from '../../observer/ISubject';
+
+// Models
 import { KeycloakLogin } from '../../models/keycloak-login';
 
 export abstract class ITokenManager extends ISubject {

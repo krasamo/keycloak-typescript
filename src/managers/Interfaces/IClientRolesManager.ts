@@ -1,7 +1,8 @@
+// Models
 import { RoleRepresentation } from '../../models/role-representation';
 
 export interface IClientRolesManager {
-  getRoles(
+  getRole(
     realmName: string,
     clientId: string,
     roleName: string

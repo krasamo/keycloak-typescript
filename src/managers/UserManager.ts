@@ -1,12 +1,19 @@
+// Interfaces
 import { IUserManager } from './Interfaces/IUserManager';
-import { User } from '../models/user';
-import { HeadersFactory } from '../helpers/headers-factory';
-import { requestBuilder } from '../helpers/request-builder';
 import { IObserver } from '../observer/IObserver';
 import { ISubject } from '../observer/ISubject';
+
+// Models
 import { UserFields } from '../enums/UserFields';
 import { MappingsRepresentation } from '../models/mappings-representation';
 import { ClientMappingsRepresentation } from '../models/client-mappings-representation';
+import { User } from '../models/user';
+
+// Helpers
+import { HeadersFactory } from '../helpers/headers-factory';
+import { requestBuilder } from '../helpers/request-builder';
+
+// Managers
 import { RealmManager } from './RealmManager';
 import { ClientManager } from './ClientManager';
 
@@ -129,7 +136,6 @@ export default class UserManager extends IUserManager implements IObserver {
 
     await Promise.allSettled([
       this.resetPassword(userID, password, isTemporaryPassword)
-      //this.sendVerificationMail(userID)
     ]);
   };
 
@@ -138,6 +144,8 @@ export default class UserManager extends IUserManager implements IObserver {
     user: User,
     isReplaceOperation: boolean
   ): Promise<User> {
+    const currentUser = await this.get(userId);
+
     user = !isReplaceOperation
       ? this.fuseUsers(user, await this.get(userId))
       : user;
@@ -196,7 +204,6 @@ export default class UserManager extends IUserManager implements IObserver {
   };
 
   update(subject: ISubject, args: string[]) {
-    console.log(`Notified usermanager with args: ${args[0]}`);
     if (args.length > 0) {
       this.accessToken = args[0];
     }
@@ -295,11 +302,15 @@ export default class UserManager extends IUserManager implements IObserver {
   protected fuseUsers(a: User, b: User): User {
     //fuse only types that can be fused ex: append an array to another
 
-    a.attributes = a.attributes
-      ? b.attributes
-        ? new Map([...a.attributes.entries(), ...b.attributes.entries()])
-        : a.attributes
-      : b.attributes;
+    if (a.attributes && b.attributes) {
+      b.attributes.forEach((value: string[], key: string) => {
+        if (a.attributes!.has(key))
+          a.attributes!.set(key, a.attributes!.get(key)!.concat(value));
+        else a.attributes!.set(key, value);
+      });
+    } else if (b.attributes) {
+      a.attributes = b.attributes;
+    }
 
     a.disableableCredentialTypes = a.disableableCredentialTypes
       ? b.disableableCredentialTypes
@@ -316,20 +327,28 @@ export default class UserManager extends IUserManager implements IObserver {
         : b.realmRoles
       : a.realmRoles;
 
-    a.clientRoles = a.clientRoles
-      ? b.clientRoles
-        ? new Map([...a.clientRoles.entries(), ...b.clientRoles.entries()])
-        : a.clientRoles
-      : b.clientRoles;
+    if (a.clientRoles && b.clientRoles) {
+      b.clientRoles.forEach((value: string[], key: string) => {
+        if (a.clientRoles!.has(key))
+          a.clientRoles!.set(key, a.clientRoles!.get(key)!.concat(value));
+        else a.clientRoles!.set(key, value);
+      });
+    } else if (b.clientRoles) {
+      a.clientRoles = b.clientRoles;
+    }
 
-    a.applicationRoles = a.applicationRoles
-      ? b.applicationRoles
-        ? new Map([
-            ...a.applicationRoles.entries(),
-            ...b.applicationRoles.entries()
-          ])
-        : a.applicationRoles
-      : b.applicationRoles;
+    if (a.applicationRoles && b.applicationRoles) {
+      b.applicationRoles.forEach((value: string[], key: string) => {
+        if (a.applicationRoles!.has(key))
+          a.applicationRoles!.set(
+            key,
+            a.applicationRoles!.get(key)!.concat(value)
+          );
+        else a.applicationRoles!.set(key, value);
+      });
+    } else if (b.applicationRoles) {
+      a.applicationRoles = b.applicationRoles;
+    }
 
     a.groups = a.groups
       ? b.groups
@@ -337,11 +356,13 @@ export default class UserManager extends IUserManager implements IObserver {
         : b.groups
       : a.groups;
 
-    a.access = a.access
-      ? b.access
-        ? new Map([...a.access.entries(), ...b.access.entries()])
-        : a.access
-      : b.access;
+    if (a.access && b.access) {
+      b.access.forEach((value: boolean, key: string) => {
+        if (!a.access!.has(key)) a.access!.set(key, value);
+      });
+    } else if (b.access) {
+      a.access = b.access;
+    }
 
     return a;
   }
@@ -375,21 +396,14 @@ export default class UserManager extends IUserManager implements IObserver {
     if (realmRoles) {
       const realmsBody: { id: string; name: string }[] = [];
 
-      for (const role in realmRoles) {
-        const roleId = (await this.realmManager.getRole('master', role)).id;
+      const realmRolesList = await this.realmManager.getRoles(
+        'master',
+        realmRoles
+      );
 
-        console.log(`received realm role id: ${roleId}`);
-
-        realmsBody.push({ id: roleId ? roleId : '', name: role });
-      }
-
-      /*realmRoles?.forEach(async (role) => {
-        const roleId = (await this.realmManager.getRole('master', role)).id;
-
-        console.log(`received realm role id: ${roleId}`);
-
-        realmsBody.push({ id: roleId ? roleId : '', name: role });
-      });*/
+      realmRolesList.forEach((role) => {
+        realmsBody.push({ id: role.id ?? '', name: role.name ?? '' });
+      });
 
       const apiConfig = {
         url: `${this.url}/${userId}/role-mappings/realm`,
@@ -398,37 +412,21 @@ export default class UserManager extends IUserManager implements IObserver {
         body: realmsBody
       };
 
-      console.log(realmsBody[0].id);
-
       await requestBuilder(apiConfig);
     }
 
     if (clientRoles) {
-      clientRoles?.forEach(async (value: string[], key: string) => {
+      for (const [key, value] of clientRoles) {
         const clientsBody: { id: string; name: string }[] = [];
         const clientId = (await this.clientManager.get('master', key)).id;
 
-        console.log(`received client id: ${clientId}`);
-
-        for (const role in value) {
+        for (const role of value) {
           const roleId = (
-            await this.clientManager.getRoles('master', clientId, role)
+            await this.clientManager.getRole('master', clientId, role)
           ).id;
-
-          console.log(`received client role id: ${roleId}`);
 
           clientsBody.push({ id: roleId ? roleId : '', name: role });
         }
-
-        /*value.forEach(async (role) => {
-          const roleId = (
-            await this.clientManager.getRoles('master', clientId, role)
-          ).id;
-
-          console.log(`received client role id: ${roleId}`);
-
-          clientsBody.push({ id: roleId ? roleId : '', name: role });
-        });*/
 
         const apiConfig = {
           url: `${this.url}/${userId}/role-mappings/clients/${clientId}`,
@@ -438,7 +436,7 @@ export default class UserManager extends IUserManager implements IObserver {
         };
 
         await requestBuilder(apiConfig);
-      });
+      }
     }
   }
 }

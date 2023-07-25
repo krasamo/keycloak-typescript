@@ -1,10 +1,15 @@
+// Interfaces
 import { IClientRolesManager } from './Interfaces/IClientRolesManager';
 import { IObserver } from '../observer/IObserver';
 import { ISubject } from '../observer/ISubject';
-import { HeadersFactory } from '../helpers/headers-factory';
-import { RoleRepresentation } from '../models/role-representation';
-import { requestBuilder } from '../helpers/request-builder';
 import { IClientManager } from './Interfaces/IClientManager';
+
+// Helpers
+import { requestBuilder } from '../helpers/request-builder';
+import { HeadersFactory } from '../helpers/headers-factory';
+
+// Models
+import { RoleRepresentation } from '../models/role-representation';
 import { ClientRepresentation } from '../models/client-representation';
 
 export class ClientManager
@@ -17,7 +22,7 @@ export class ClientManager
     this.url = url;
     this.accessToken = '';
   }
-  getRoles = async (
+  getRole = async (
     realmName: string,
     clientId: string,
     roleName: string
@@ -25,8 +30,6 @@ export class ClientManager
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
     );
-
-    //const client_id = (await this.get(realmName, clientId)).id;
 
     const apiConfig = {
       url: `${this.url}/${realmName}/clients/${clientId}/roles/${roleName}`,
@@ -44,24 +47,20 @@ export class ClientManager
     realmName: string,
     clientId: string
   ): Promise<ClientRepresentation> => {
-    const headers = HeadersFactory.instance().authorizationHeader(
+    const headers = HeadersFactory.instance().authAndUrlEncodedHeader(
       this.accessToken
     );
 
     const apiConfig = {
-      url: `${this.url}/${realmName}/clients`,
+      url: `${this.url}/${realmName}/clients?clientId=${clientId}`,
       method: 'GET',
       headers: headers,
       body: {}
     };
 
-    const response = await requestBuilder(apiConfig, {
-      params: { clientId: clientId }
-    });
+    const response = await requestBuilder(apiConfig);
 
-    console.log(`Received client info: ${response.data}`);
-
-    return response.data as ClientRepresentation;
+    return response.data[0] as ClientRepresentation;
   };
 
   update(subject: ISubject, args: string[]) {
