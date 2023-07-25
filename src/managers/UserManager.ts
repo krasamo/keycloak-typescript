@@ -144,8 +144,6 @@ export default class UserManager extends IUserManager implements IObserver {
     user: User,
     isReplaceOperation: boolean
   ): Promise<User> {
-    const currentUser = await this.get(userId);
-
     user = !isReplaceOperation
       ? this.fuseUsers(user, await this.get(userId))
       : user;

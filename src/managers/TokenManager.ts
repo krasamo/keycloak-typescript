@@ -26,7 +26,7 @@ export default class TokenManager extends ITokenManager {
     this.url = url;
 
     //Attaching initial observers if any
-    if (observers != undefined) {
+    if (observers) {
       observers.forEach((observer) => {
         this.attach(observer);
       });
