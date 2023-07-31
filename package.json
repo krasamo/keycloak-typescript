@@ -13,6 +13,28 @@
     "test": "jest",
     "test:watch": "jest --watch --verbose --no-cache"
   },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/krasamo/keycloak-typescript"
+  },
+  "homepage": "https://www.krasamo.com/",
+  "bugs": {
+    "url": "https://github.com/krasamo/keycloak-typescript/issues",
+    "email": "npm_admin@krasamo.com"
+  },
+  "keywords": [
+    "keycloak",
+    "rest",
+    "typescript",
+    "ts",
+    "auth",
+    "oauth",
+    "quarkus"
+  ],
+  "files": [
+    "LICENSE",
+    "lib/"
+  ],
   "author": "Nestor Sandoval",
   "license": "MIT",
   "devDependencies": {
