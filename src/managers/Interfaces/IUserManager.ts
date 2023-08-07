@@ -3,16 +3,18 @@ import { User } from '../../models/user';
 
 export abstract class IUserManager {
   public abstract get(userId: string): Promise<User>;
+  public abstract getUserId(username: string): Promise<string>;
   protected abstract getRoles(userId: string): Promise<never>;
 
   public abstract create(
     email: string,
     username: string,
+    enabled: boolean,
     firstName: string,
     lastName: string,
     password: string,
     isTemporaryPassword: boolean
-  ): Promise<void>;
+  ): Promise<string>;
 
   public abstract modify(
     userId: string,

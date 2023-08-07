@@ -43,6 +43,25 @@ export default class UserManager extends IUserManager implements IObserver {
     this.realmManager = realmManager;
   }
 
+  getUserId = async (username: string): Promise<string> => {
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const apiConfig = {
+      url: `${this.url}?username=${username}&exact=true`,
+      method: 'GET',
+      headers: headers,
+      body: {}
+    };
+
+    const response = await requestBuilder(apiConfig);
+
+    const userId: string = response.data[0].id;
+
+    return userId;
+  };
+
   get = async (userId: string): Promise<User> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
@@ -109,11 +128,12 @@ export default class UserManager extends IUserManager implements IObserver {
   create = async (
     email: string,
     username: string,
+    enabled: boolean,
     firstName: string,
     lastName: string,
     password: string,
     isTemporaryPassword: boolean
-  ): Promise<void> => {
+  ): Promise<string> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
     );
@@ -126,7 +146,8 @@ export default class UserManager extends IUserManager implements IObserver {
         email: email,
         username: username,
         firstName: firstName,
-        lastName: lastName
+        lastName: lastName,
+        enabled: enabled
       }
     };
 
@@ -137,6 +158,8 @@ export default class UserManager extends IUserManager implements IObserver {
     await Promise.allSettled([
       this.resetPassword(userID, password, isTemporaryPassword)
     ]);
+
+    return userID;
   };
 
   public async modify(

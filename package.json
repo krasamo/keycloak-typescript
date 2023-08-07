@@ -1,6 +1,6 @@
 {
   "name": "keycloak-typescript",
-  "version": "1.0.0",
+  "version": "1.0.6",
   "description": "A user friendly library to use keycloak in nodejs projects",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",
@@ -10,6 +10,7 @@
     "prettier:format": "prettier --config .prettierrc 'src/**/*.(ts|js)' --write",
     "prettier:watch": "onchange 'src/**/*.(ts|js)' -- prettier --write {{changed}}",
     "pack": "npm pack --pack-destination ~",
+    "publish": "npm publish",
     "test": "jest",
     "test:watch": "jest --watch --verbose --no-cache"
   },
@@ -29,7 +30,8 @@
     "ts",
     "auth",
     "oauth",
-    "quarkus"
+    "quarkus",
+    "wildfly"
   ],
   "files": [
     "LICENSE",
