@@ -3,7 +3,7 @@
 <h1>Keycloak-Typescript</h1>
 <p>A simple middleware library that simplifies the integration of keycloak with your project</p>
 
-<h4> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/blob/master/README.md"> Documentation </a> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/issues"> Report Bug </a> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/issues"> Request Feature </a> </h4>
+<h4> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/blob/master/docs/USAGE.md"> Documentation </a> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/issues"> Report Bug </a> <span> · </span> <a href="https://github.com/Krasamo/keycloak-typescript/issues"> Request Feature </a> </h4>
 
 
 </div>
