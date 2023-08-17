@@ -132,7 +132,8 @@ export default class UserManager extends IUserManager implements IObserver {
     firstName: string,
     lastName: string,
     password: string,
-    isTemporaryPassword: boolean
+    isTemporaryPassword: boolean,
+    verifyEmail: boolean
   ): Promise<string> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
@@ -155,9 +156,9 @@ export default class UserManager extends IUserManager implements IObserver {
 
     const userID = response.headers.location.split('/').pop();
 
-    await Promise.allSettled([
-      this.resetPassword(userID, password, isTemporaryPassword)
-    ]);
+    await this.resetPassword(userID, password, isTemporaryPassword);
+
+    if (verifyEmail) await this.sendVerificationMail(userID);
 
     return userID;
   };

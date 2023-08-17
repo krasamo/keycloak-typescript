@@ -13,7 +13,8 @@ export abstract class IUserManager {
     firstName: string,
     lastName: string,
     password: string,
-    isTemporaryPassword: boolean
+    isTemporaryPassword: boolean,
+    verifyEmail: boolean
   ): Promise<string>;
 
   public abstract modify(
