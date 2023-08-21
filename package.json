@@ -1,6 +1,6 @@
 {
   "name": "keycloak-typescript",
-  "version": "1.0.7",
+  "version": "1.0.9",
   "description": "A user friendly library to use keycloak in nodejs projects",
   "main": "lib/index.js",
   "types": "lib/index.d.ts",

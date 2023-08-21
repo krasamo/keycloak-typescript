@@ -69,7 +69,8 @@ try{
         user.enabled,
         user.firstname,
         user.lastname,
-        user.password    
+        user.password,
+        true/false // If this argument is set to true, and you have a mail server configured in your keycloak server, then a verification email will be sent to the new user's email
     });
 }catch(error){
     //Error
