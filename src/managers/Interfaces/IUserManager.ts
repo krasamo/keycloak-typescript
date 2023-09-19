@@ -36,4 +36,5 @@ export abstract class IUserManager {
     newPassword: string,
     isTemporary: boolean
   ): Promise<void>;
+  public abstract forgotPassword(userId: string): Promise<void>;
 }
