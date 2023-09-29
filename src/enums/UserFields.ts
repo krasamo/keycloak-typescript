@@ -28,6 +28,7 @@ export class UserFields {
   private static DEFAULT_FIELDS: string[] = [
     UserFields.ID,
     UserFields.USERNAME,
+    UserFields.EMAIL_VERIFIED,
     UserFields.FIRST_NAME,
     UserFields.LAST_NAME,
     UserFields.EMAIL,
