@@ -214,7 +214,7 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 
-  forgotPassword = async (userId: string): Promise<void> => {
+  public forgotPassword = async (userId: string): Promise<void> => {
     const apiConfig = {
       url: `${this.url}/${userId}/execute-actions-email`,
       method: 'PUT',
@@ -225,7 +225,7 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 
-  private sendVerificationMail = async (userId: string) => {
+  public sendVerificationMail = async (userId: string) => {
     const apiConfig = {
       url: `${this.url}/${userId}/send-verify-email`,
       method: 'PUT',
