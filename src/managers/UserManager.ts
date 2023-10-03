@@ -472,4 +472,19 @@ export default class UserManager extends IUserManager implements IObserver {
       }
     }
   }
+
+  public delete = async (userId: string): Promise<void> => {
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const apiConfig = {
+      url: `${this.url}/${userId}`,
+      method: 'DELETE',
+      headers: headers,
+      body: {}
+    };
+
+    await requestBuilder(apiConfig);
+  };
 }
