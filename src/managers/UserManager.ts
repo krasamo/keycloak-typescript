@@ -219,7 +219,7 @@ export default class UserManager extends IUserManager implements IObserver {
       url: `${this.url}/${userId}/execute-actions-email`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
-      body: `["UPDATE_PASSWORD"]`
+      body: ['UPDATE_PASSWORD']
     };
 
     await requestBuilder(apiConfig);
