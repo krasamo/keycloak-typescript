@@ -9,7 +9,7 @@ export abstract class IUserManager {
     queryValue: string
   ): Promise<User[]>;
 
-  public abstract getUserId(username: string): Promise<string | false>;
+  public abstract getUserId(username: string): Promise<string>;
   protected abstract getRoles(userId: string): Promise<never>;
 
   public abstract create(
