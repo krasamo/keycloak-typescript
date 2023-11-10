@@ -3,6 +3,12 @@ import { User } from '../../models/user';
 
 export abstract class IUserManager {
   public abstract get(userId: string): Promise<User>;
+
+  public abstract getUsers(
+    queryParameter: string,
+    queryValue: string
+  ): Promise<User[]>;
+
   public abstract getUserId(username: string): Promise<string>;
   protected abstract getRoles(userId: string): Promise<never>;
 
