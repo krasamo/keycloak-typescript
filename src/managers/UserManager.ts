@@ -43,6 +43,39 @@ export default class UserManager extends IUserManager implements IObserver {
     this.realmManager = realmManager;
   }
 
+  /**
+   *
+   * @param queryParameter
+   *   - briefRepresentation: Defines whether brief representations are returned
+   *   - email: User's email
+   *   - emailVerified: whether the email has been verified
+   *   - enabled: User is enabled or not
+   *   - firstName
+   *   - lastName
+   * @param queryValue
+   * @returns { User[] }
+   */
+
+  getUsers = async (
+    queryParameter: string,
+    queryValue: string
+  ): Promise<User[]> => {
+    const headers = HeadersFactory.instance().authorizationHeader(
+      this.accessToken
+    );
+
+    const apiConfig = {
+      url: `${this.url}?${queryParameter}=${queryValue}&exact=true`,
+      method: 'GET',
+      headers: headers,
+      body: {}
+    };
+
+    const response = await requestBuilder(apiConfig);
+
+    return response.data as User[];
+  };
+
   getUserId = async (username: string): Promise<string> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
@@ -219,7 +252,7 @@ export default class UserManager extends IUserManager implements IObserver {
       url: `${this.url}/${userId}/execute-actions-email`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
-      body: `["UPDATE_PASSWORD"]`
+      body: ['UPDATE_PASSWORD']
     };
 
     await requestBuilder(apiConfig);
