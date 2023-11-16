@@ -57,18 +57,23 @@ export default class TokenManager extends ITokenManager {
     await this.makeRefreshRequest(apiConfig);
 
     //Create timed task to refresh token
+    const marginInSeconds = 60;
     if (
       this.accessTokenExpireTime != undefined &&
       this.refreshTokenExpireTime != undefined
     ) {
-      if (this.accessTokenExpireTime > this.refreshTokenExpireTime) {
+      const accessTokenInterval = this.accessTokenExpireTime - marginInSeconds;
+      const refreshTokenInterval =
+        this.refreshTokenExpireTime - marginInSeconds;
+
+      if (accessTokenInterval > refreshTokenInterval) {
         setInterval(() => {
           this.refreshAccessToken();
-        }, this.refreshTokenExpireTime * 1000);
+        }, refreshTokenInterval * 1000);
       } else {
         setInterval(() => {
           this.refreshAccessToken();
-        }, this.accessTokenExpireTime * 1000);
+        }, accessTokenInterval * 1000);
       }
     }
   };
