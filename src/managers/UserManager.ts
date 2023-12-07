@@ -166,12 +166,13 @@ export default class UserManager extends IUserManager implements IObserver {
     lastName: string,
     password: string,
     isTemporaryPassword: boolean,
-    verifyEmail: boolean
+    verifyEmail: boolean,
+    attributes: string
   ): Promise<string> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
     );
-
+    const objectAttributes = JSON.parse(attributes);
     const apiConfig = {
       url: this.url,
       method: 'POST',
@@ -181,7 +182,8 @@ export default class UserManager extends IUserManager implements IObserver {
         username: username,
         firstName: firstName,
         lastName: lastName,
-        enabled: enabled
+        enabled: enabled,
+        attributes: objectAttributes
       }
     };
 
@@ -521,3 +523,4 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 }
+
