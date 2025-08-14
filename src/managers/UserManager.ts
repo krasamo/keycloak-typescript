@@ -262,10 +262,10 @@ export default class UserManager extends IUserManager implements IObserver {
 
   public sendVerificationMail = async (userId: string) => {
     const apiConfig = {
-      url: `${this.url}/${userId}/send-verify-email`,
+      url: `${this.url}/${userId}/execute-actions-email`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
-      body: {}
+      body: ['VERIFY_EMAIL']
     };
 
     await requestBuilder(apiConfig);
@@ -523,4 +523,3 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 }
-
