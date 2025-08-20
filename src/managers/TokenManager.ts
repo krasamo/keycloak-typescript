@@ -80,11 +80,13 @@ export default class TokenManager extends ITokenManager {
 
   protected makeRefreshRequest = async (apiConfig: {
     url;
-    method;
-    headers;
+    method?: string;
+    headers?: Record<string, string>;
     body;
   }): Promise<void> => {
-    const response = await requestBuilder(apiConfig);
+    const { url, method = 'get', headers = {}, body } = apiConfig;
+
+    const response = await requestBuilder({ url, method, headers, body });
 
     this.accessToken = response?.data.access_token;
     this.refreshToken = response?.data.refresh_token;
