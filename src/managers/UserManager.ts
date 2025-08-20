@@ -432,6 +432,14 @@ export default class UserManager extends IUserManager implements IObserver {
       a.access = b.access;
     }
 
+    // Fuse additional fields like email, firstName, lastName, emailVerified, enabled, and totp
+    a.email = a.email || b.email;
+    a.firstName = a.firstName || b.firstName;
+    a.lastName = a.lastName || b.lastName;
+    a.emailVerified = a.emailVerified ?? b.emailVerified;
+    a.enabled = a.enabled ?? b.enabled;
+    a.totp = a.totp ?? b.totp;
+
     return a;
   }
 
