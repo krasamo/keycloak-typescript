@@ -45,8 +45,8 @@ export abstract class IUserManager {
   ): Promise<void>;
   public abstract forgotPassword(
     userId: string,
-    clientId: string,
-    redirectURL: string
+    clientId?: string,
+    redirectURL?: string
   ): Promise<void>;
 
   public abstract delete(userId: string): Promise<void>;
