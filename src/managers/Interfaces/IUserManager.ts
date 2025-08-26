@@ -43,7 +43,11 @@ export abstract class IUserManager {
     newPassword: string,
     isTemporary: boolean
   ): Promise<void>;
-  public abstract forgotPassword(userId: string): Promise<void>;
+  public abstract forgotPassword(
+    userId: string,
+    clientId?: string,
+    redirectURL?: string
+  ): Promise<void>;
 
   public abstract delete(userId: string): Promise<void>;
 }

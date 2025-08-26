@@ -249,9 +249,23 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 
-  public forgotPassword = async (userId: string): Promise<void> => {
+  public forgotPassword = async (
+    userId: string,
+    clientId?: string,
+    redirectURL?: string
+  ): Promise<void> => {
+    const queryParams = new URLSearchParams();
+
+    if (clientId) {
+      queryParams.append('client_id', clientId);
+    }
+
+    if (redirectURL) {
+      queryParams.append('redirect_uri', redirectURL);
+    }
+
     const apiConfig = {
-      url: `${this.url}/${userId}/execute-actions-email`,
+      url: `${this.url}/${userId}/execute-actions-email?${queryParams.toString()}`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
       body: ['UPDATE_PASSWORD']
