@@ -167,7 +167,9 @@ export default class UserManager extends IUserManager implements IObserver {
     password: string,
     isTemporaryPassword: boolean,
     verifyEmail: boolean,
-    attributes: string
+    attributes: string,
+    clientId?: string,
+    redirectURL?: string
   ): Promise<string> => {
     const headers = HeadersFactory.instance().authorizationHeader(
       this.accessToken
@@ -193,7 +195,8 @@ export default class UserManager extends IUserManager implements IObserver {
 
     await this.resetPassword(userID, password, isTemporaryPassword);
 
-    if (verifyEmail) await this.sendVerificationMail(userID);
+    if (verifyEmail)
+      await this.sendVerificationMail(userID, clientId, redirectURL);
 
     return userID;
   };
@@ -274,12 +277,26 @@ export default class UserManager extends IUserManager implements IObserver {
     await requestBuilder(apiConfig);
   };
 
-  public sendVerificationMail = async (userId: string) => {
+  public sendVerificationMail = async (
+    userId: string,
+    clientId?: string,
+    redirectURL?: string
+  ) => {
+    const queryParams = new URLSearchParams();
+
+    if (clientId) {
+      queryParams.append('client_id', clientId);
+    }
+
+    if (redirectURL) {
+      queryParams.append('redirect_uri', redirectURL);
+    }
+
     const apiConfig = {
-      url: `${this.url}/${userId}/execute-actions-email`,
+      url: `${this.url}/${userId}/send-verify-email?${queryParams.toString()}`,
       method: 'PUT',
       headers: HeadersFactory.instance().authorizationHeader(this.accessToken),
-      body: ['VERIFY_EMAIL']
+      body: {}
     };
 
     await requestBuilder(apiConfig);
