@@ -21,7 +21,9 @@ export abstract class IUserManager {
     password: string,
     isTemporaryPassword: boolean,
     verifyEmail: boolean,
-    attributes: string
+    attributes: string,
+    clientId?: string,
+    redirectURL?: string
   ): Promise<string>;
 
   public abstract modify(
