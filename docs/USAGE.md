@@ -59,7 +59,11 @@ try{
 
 #### create(...): Promise<string>;
     
-Creates a new user with the given parameters and returns the user id of that new user.
+Creates a new user with the given parameters and returns the user id of that new user. The last two paremeters are optional, and they are used to add a redirect uri to the verification email that will be sent to the new user (if the second to last parameter is set to true, and you have a mail server configured in your keycloak server).
+
+*Important Note*
+
+For the redirectURL to work, it must be one of the valid redirect URIs configured in your client inside Keycloak, otherwise Keycloak will reject it. You can use wildcards like https://myapp.com/* if needed.
 
 ```ts
 try{
@@ -70,7 +74,10 @@ try{
         user.firstname,
         user.lastname,
         user.password,
+        user.attributes,
         true/false // If this argument is set to true, and you have a mail server configured in your keycloak server, then a verification email will be sent to the new user's email
+        clientId // The client that holds the redirect uri
+        redirectURL // The redirect uri that will be used in the verification email
     });
 }catch(error){
     //Error
@@ -127,6 +134,26 @@ try{
     'a-sus-new-password',
     false //--> Since this parameter is set to false, the new password will not be temporary, and the user will not have to change it in their next login.
     ); 
+}catch(error){
+    //Error
+}
+```
+
+### forgotPassword(userId: string, clientId?: string, redirectURL?: string)
+
+Send an email to the user with a link they can click to change their password. The clientId, and redirectURL parameters are optional, and it is used to add a redirect uri to the email that will be sent to the user (if you have a mail server configured in your keycloak server).
+
+*Important Note*
+
+For the redirectURL to work, it must be one of the valid redirect URIs configured in your client inside Keycloak, otherwise Keycloak will reject it. You can use wildcards like https://myapp.com/* if needed.
+
+```ts
+try{
+    await keycloakFacade.userManager.forgotPassword(
+        'a-user-id',
+        'clientId', // The client that holds the redirect uri
+        'redirectURL' // The redirect uri that will be used in the email
+    );
 }catch(error){
     //Error
 }
