@@ -27,6 +27,28 @@ const newUserId = this.keycloakFacade.userManager.create({ // Use example of the
 });
 ```
 
+## Security Best Practices
+
+**Always use environment variables for credentials:**
+
+```ts
+import createKeycloakFacade from 'keycloak-typescript';
+
+const keycloakFacade = await createKeycloakFacade(
+    {
+        clientId: process.env.KEYCLOAK_CLIENT_ID!,
+        username: process.env.KEYCLOAK_USERNAME!,
+        password: process.env.KEYCLOAK_PASSWORD!,
+        clientSecret: process.env.KEYCLOAK_CLIENT_SECRET
+    },
+    process.env.KEYCLOAK_REALM!,
+    process.env.KEYCLOAK_URL!,
+    true
+);
+```
+
+**Note:** The library stores credentials in memory for automatic token refresh and re-authentication. Never hardcode credentials in your source code.
+
 ## Managers
 
 ### User Manager

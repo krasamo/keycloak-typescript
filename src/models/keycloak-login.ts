@@ -3,4 +3,5 @@ export interface KeycloakLogin {
   username: string;
   password: string;
   clientSecret?: string;
+  requestOfflineAccess?: boolean;
 }
